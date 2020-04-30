@@ -1,20 +1,31 @@
 const router = require("express").Router();
-const { addPage } = require("../views");
-const { Page } = require("../models");
+const { addPage, main } = require("../views");
+const Page = require("../models").Page;
+const User = require("../models").User;
 const wikipage = require("../views/wikipage");
 
-router.get("/", (req, res, next) => {
-  res.send("<h1>Inside /wiki/ </h1>");
+router.get("/", async (req, res, next) => {
+  try {
+    const pages = await Page.findAll();
+    res.send(main(pages));
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/", async (req, res, next) => {
-  const page = new Page({
-    title: req.body.title,
-    content: req.body.content,
-  });
-
   try {
-    await page.save();
+    const [user, wasCreated] = await User.findOrCreate({
+      where: {
+        name: req.body.name,
+        email: req.body.email,
+      },
+    });
+
+    const page = await Page.create(req.body);
+
+    await page.setAuthor(user);
+
     res.redirect(`/wiki/${page.slug}`);
   } catch (error) {
     next(error);

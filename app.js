@@ -3,7 +3,6 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const layout = require("./views/layout");
-// const { db } = require("./models");
 const models = require("./models");
 const wikiRouter = require("./routes/wiki");
 const userRouter = require("./routes/user");
@@ -16,10 +15,6 @@ app.use("/wiki", wikiRouter);
 app.get("/", (req, res) => {
   res.redirect("/wiki");
 });
-
-// db.authenticate().then(() => {
-//   console.log("connected to the database");
-// });
 
 const init = async () => {
   models.db.sync({ force: true });

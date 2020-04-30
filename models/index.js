@@ -39,5 +39,6 @@ Page.beforeValidate((pageInstance) => {
   const slug = generateSlug(pageInstance.title);
   pageInstance.slug = slug;
 });
+Page.belongsTo(User, { as: "author" });
 
 module.exports = { db, Page, User };
